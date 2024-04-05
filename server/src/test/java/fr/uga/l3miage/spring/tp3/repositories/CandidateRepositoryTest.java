@@ -67,14 +67,31 @@ public class CandidateRepositoryTest {
     @Test
     void testRequestFindAllByCandidateEvaluationGridEntitiesGradeLessThan(){
 
+
+
+
+        CandidateEntity candidateEntity = CandidateEntity
+                .builder()
+                .firstname("firstname")
+                .email("email@test.com")
+                .build();
+
+        CandidateEntity candidateEntity1 = CandidateEntity
+                .builder()
+                .firstname("firstname1")
+                .email("email2@test.com")
+                .build();
+
         CandidateEvaluationGridEntity candidateEvaluationGridEntity = CandidateEvaluationGridEntity
                 .builder()
                 .grade(5)
+                .candidateEntity(candidateEntity)
                 .build();
 
         CandidateEvaluationGridEntity candidateEvaluationGridEntity1 = CandidateEvaluationGridEntity
                 .builder()
                 .grade(3)
+<<<<<<< HEAD
                 .build();
 
 
@@ -93,6 +110,23 @@ public class CandidateRepositoryTest {
         
         candidateEvaluationGridRepository.save(candidateEvaluationGridEntity);
         candidateEvaluationGridRepository.save(candidateEvaluationGridEntity1);
+=======
+                .candidateEntity(candidateEntity1)
+                .build();
+
+        candidateRepository.save(candidateEntity);
+        candidateRepository.save(candidateEntity1);
+        candidateEvaluationGridRepository.save(candidateEvaluationGridEntity);
+        candidateEvaluationGridRepository.save(candidateEvaluationGridEntity1);
+
+
+        //when
+        Set<CandidateEntity> candidateEntitiesResponses = candidateRepository.findAllByCandidateEvaluationGridEntitiesGradeLessThan(5);
+
+        //then
+        assertThat(candidateEntitiesResponses).hasSize(1);
+        assertThat(candidateEntitiesResponses.stream().findFirst().get().getFirstname()).isEqualTo("firstname1");
+>>>>>>> 955326d (test 2)
 
         candidateRepository.save(candidateEntity);
         candidateRepository.save(candidateEntity1);        
