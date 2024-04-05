@@ -31,14 +31,13 @@ public class CandidateRepositoryTest {
         TestCenterEntity testCenterEntity = TestCenterEntity
                 .builder()
                 .code(TestCenterCode.GRE)
+                .candidateEntities(Set.of())
                 .build();
-        testCenterRepository.save(testCenterEntity);
 
         TestCenterEntity testCenterEntity1 = TestCenterEntity
                 .builder()
                 .code(TestCenterCode.NCE)
                 .build();
-        testCenterRepository.save(testCenterEntity1);
 
         CandidateEntity candidateEntity1 = CandidateEntity
                 .builder()
@@ -48,11 +47,12 @@ public class CandidateRepositoryTest {
 
         CandidateEntity candidateEntity2 = CandidateEntity
                 .builder()
-                .email("test@test.com")
+                .email("test02@test.com")
                 .testCenterEntity(testCenterEntity1)
                 .build();
 
-
+        testCenterRepository.save(testCenterEntity);
+        testCenterRepository.save(testCenterEntity1);
         candidateRepository.save(candidateEntity1);
         candidateRepository.save(candidateEntity2);
 
@@ -62,10 +62,8 @@ public class CandidateRepositoryTest {
         //Then
         assertThat(candidateEntityResponse).hasSize(1);
         assertThat(candidateEntityResponse.stream().findFirst().get().getTestCenterEntity().getCode()).isEqualTo(TestCenterCode.GRE);
-
-
-
     }
+  
     @Test
     void testRequestFindAllByCandidateEvaluationGridEntitiesGradeLessThan(){
 
@@ -95,7 +93,6 @@ public class CandidateRepositoryTest {
                 .build();
 
         candidateRepository.save(candidateEntity);
-        candidateRepository.save(candidateEntity1);
-
+        candidateRepository.save(candidateEntity1);        
     }
 }
