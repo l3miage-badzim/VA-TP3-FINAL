@@ -77,8 +77,6 @@ public class CandidateRepositoryTest {
                 .grade(3)
                 .build();
 
-        candidateEvaluationGridRepository.save(candidateEvaluationGridEntity);
-        candidateEvaluationGridRepository.save(candidateEvaluationGridEntity1);
 
         CandidateEntity candidateEntity = CandidateEntity
                 .builder()
@@ -91,6 +89,10 @@ public class CandidateRepositoryTest {
                 .firstname("firstname")
                 .candidateEvaluationGridEntities(Set.of(candidateEvaluationGridEntity1))
                 .build();
+
+        
+        candidateEvaluationGridRepository.save(candidateEvaluationGridEntity);
+        candidateEvaluationGridRepository.save(candidateEvaluationGridEntity1);
 
         candidateRepository.save(candidateEntity);
         candidateRepository.save(candidateEntity1);        
