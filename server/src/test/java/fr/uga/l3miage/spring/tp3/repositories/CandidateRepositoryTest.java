@@ -60,7 +60,6 @@ public class CandidateRepositoryTest {
         assertThat(candidateEntityResponse).hasSize(1);
         assertThat(candidateEntityResponse.stream().findFirst().get().getTestCenterEntity().getCode()).isEqualTo(TestCenterCode.GRE);
 
-
-
+        
     }
 }
