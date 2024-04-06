@@ -11,12 +11,15 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
+
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.when;
 
 @AutoConfigureTestDatabase
@@ -29,29 +32,29 @@ public class ExamComponentTest {
     private ExamRepository examRepository;
 
     @Test
-    void getAllNotFound(){
+    void testGetAllNotFound(){
         //Given
-        when(examRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(examRepository.findAllById(anySet())).thenReturn(List.of());
 
         //when - then
         assertThrows(ExamNotFoundException.class, () -> examComponent.getAllById(Set.of(1L, 5L, 9L)));
     }
     @Test
-    void getAllFound(){
+    void testGetAllFound(){
         //given
         ExamEntity examEntity = ExamEntity
                 .builder()
-                .id(5L)
+                .name("test01")
                 .build();
-        when(examRepository.findById(5L)).thenReturn(Optional.of(examEntity));
 
         ExamEntity examEntity2 = ExamEntity
                 .builder()
-                .id(5L)
+                .name("test02")
                 .build();
-        when(examRepository.findById(5L)).thenReturn(Optional.of(examEntity2));
+
+        when(examRepository.findAllById(Set.of(0L, 1L))).thenReturn(List.of(examEntity, examEntity2));
 
         //when - then
-        assertDoesNotThrow(()->examComponent.getAllById(Set.of(5L)));
+        assertDoesNotThrow(()->examComponent.getAllById(Set.of(0L, 1L)));
     }
 }

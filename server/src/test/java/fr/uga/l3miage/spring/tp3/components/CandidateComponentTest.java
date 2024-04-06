@@ -25,7 +25,7 @@ public class CandidateComponentTest {
     private CandidateRepository candidateRepository;
 
     @Test
-    void getCandidateNotFound(){
+    void testGetCandidateNotFound(){
         //Given
         when(candidateRepository.findById(anyLong())).thenReturn(Optional.empty());
 
@@ -34,7 +34,7 @@ public class CandidateComponentTest {
     }
 
     @Test
-    void getCandidateFound(){
+    void testGetCandidateFound(){
         //given
         CandidateEntity candidateEntity = CandidateEntity
                 .builder()
