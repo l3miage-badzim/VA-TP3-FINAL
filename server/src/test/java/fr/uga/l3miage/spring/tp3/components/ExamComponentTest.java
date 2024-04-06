@@ -1,9 +1,7 @@
 
 package fr.uga.l3miage.spring.tp3.components;
 
-import fr.uga.l3miage.spring.tp3.exceptions.technical.CandidateNotFoundException;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.ExamNotFoundException;
-import fr.uga.l3miage.spring.tp3.models.CandidateEntity;
 import fr.uga.l3miage.spring.tp3.models.ExamEntity;
 import fr.uga.l3miage.spring.tp3.models.SkillEntity;
 import fr.uga.l3miage.spring.tp3.repositories.ExamRepository;
