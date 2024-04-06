@@ -5,10 +5,17 @@ import fr.uga.l3miage.spring.tp3.services.TestCenterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class TestCenterController implements TestCenterEndpoints {
     private final TestCenterService testCenterService;
+
+    @Override
+    public boolean addStudentColletionInTestCenter(Long id, List<Long> ids) {
+        return testCenterService.addListOfStudentToTestCenter(id, ids);
+    }
 
 
 }
