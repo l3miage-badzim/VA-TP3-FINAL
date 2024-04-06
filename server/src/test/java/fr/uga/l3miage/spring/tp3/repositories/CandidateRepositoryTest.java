@@ -1,3 +1,4 @@
+
 package fr.uga.l3miage.spring.tp3.repositories;
 
 
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @AutoConfigureTestDatabase
@@ -31,13 +33,14 @@ public class CandidateRepositoryTest {
         TestCenterEntity testCenterEntity = TestCenterEntity
                 .builder()
                 .code(TestCenterCode.GRE)
-                .candidateEntities(Set.of())
                 .build();
+        testCenterRepository.save(testCenterEntity);
 
         TestCenterEntity testCenterEntity1 = TestCenterEntity
                 .builder()
                 .code(TestCenterCode.NCE)
                 .build();
+        testCenterRepository.save(testCenterEntity1);
 
         CandidateEntity candidateEntity1 = CandidateEntity
                 .builder()
@@ -47,12 +50,11 @@ public class CandidateRepositoryTest {
 
         CandidateEntity candidateEntity2 = CandidateEntity
                 .builder()
-                .email("test02@test.com")
+                .email("test@test.com")
                 .testCenterEntity(testCenterEntity1)
                 .build();
 
-        testCenterRepository.save(testCenterEntity);
-        testCenterRepository.save(testCenterEntity1);
+
         candidateRepository.save(candidateEntity1);
         candidateRepository.save(candidateEntity2);
 
@@ -62,39 +64,81 @@ public class CandidateRepositoryTest {
         //Then
         assertThat(candidateEntityResponse).hasSize(1);
         assertThat(candidateEntityResponse.stream().findFirst().get().getTestCenterEntity().getCode()).isEqualTo(TestCenterCode.GRE);
+
+
+
     }
-  
     @Test
     void testRequestFindAllByCandidateEvaluationGridEntitiesGradeLessThan(){
+
+        //given
+        CandidateEntity candidateEntity = CandidateEntity
+                .builder()
+                .firstname("firstname")
+                .email("email@test.com")
+                .build();
+
+        CandidateEntity candidateEntity1 = CandidateEntity
+                .builder()
+                .firstname("firstname1")
+                .email("email2@test.com")
+                .build();
 
         CandidateEvaluationGridEntity candidateEvaluationGridEntity = CandidateEvaluationGridEntity
                 .builder()
                 .grade(5)
+                .candidateEntity(candidateEntity)
                 .build();
 
         CandidateEvaluationGridEntity candidateEvaluationGridEntity1 = CandidateEvaluationGridEntity
                 .builder()
                 .grade(3)
+                .candidateEntity(candidateEntity1)
                 .build();
 
+        candidateRepository.save(candidateEntity);
+        candidateRepository.save(candidateEntity1);
+        candidateEvaluationGridRepository.save(candidateEvaluationGridEntity);
+        candidateEvaluationGridRepository.save(candidateEvaluationGridEntity1);
 
+
+        //when
+        Set<CandidateEntity> candidateEntitiesResponses = candidateRepository.findAllByCandidateEvaluationGridEntitiesGradeLessThan(5);
+
+        //then
+        assertThat(candidateEntitiesResponses).hasSize(1);
+        assertThat(candidateEntitiesResponses.stream().findFirst().get().getFirstname()).isEqualTo("firstname1");
+
+    }
+    @Test
+    void testRequestFindAllByHasExtraTimeFalseAndBirthDateBefore(){
+
+        //given
         CandidateEntity candidateEntity = CandidateEntity
                 .builder()
-                .firstname("firstname")
-                .candidateEvaluationGridEntities(Set.of(candidateEvaluationGridEntity))
+                .firstname("candidate1")
+                .email("email@test.com")
+                .birthDate(LocalDate.of(1963, 6, 2))
+                .hasExtraTime(false)
                 .build();
 
         CandidateEntity candidateEntity1 = CandidateEntity
                 .builder()
-                .firstname("firstname")
-                .candidateEvaluationGridEntities(Set.of(candidateEvaluationGridEntity1))
+                .firstname("candidate2")
+                .email("email2@test.com")
+                .birthDate(LocalDate.of(1996, 6, 2))
+                .hasExtraTime(false)
                 .build();
 
-        
-        candidateEvaluationGridRepository.save(candidateEvaluationGridEntity);
-        candidateEvaluationGridRepository.save(candidateEvaluationGridEntity1);
-
         candidateRepository.save(candidateEntity);
-        candidateRepository.save(candidateEntity1);        
+        candidateRepository.save(candidateEntity1);
+
+        //when
+        Set<CandidateEntity> candidateEntitiesResponses = candidateRepository.findAllByHasExtraTimeFalseAndBirthDateBefore(LocalDate.of(1996, 6, 2));
+
+        //then
+        assertThat(candidateEntitiesResponses).hasSize(1);
+        assertThat(candidateEntitiesResponses.stream().findFirst().get().getFirstname()).isEqualTo("candidate1");
+
     }
 }
