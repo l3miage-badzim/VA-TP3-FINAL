@@ -39,13 +39,14 @@ class CandidateControllerTest {
         //given
         final HttpHeaders headers = new HttpHeaders();
 
-        final Map<String, Object> urlParams = new HashMap<>();
-        urlParams.put("candidateId", "Le candidat qui n'existe pas");
+        final Map<String, Long> urlParams = new HashMap<>();
+        urlParams.put("candidateId", 100L);
 
         CandidatNotFoundResponse notFoundErrorResponseExpected = CandidatNotFoundResponse
                 .builder()
-                .uri("/api/candidates/Le%candidat%20qui%20n%27existe%20pas")
-                .errorMessage("Le candidat [Le candidat qui n'existe pas] n'a pas été trouvé")
+                .candidateId(100L)
+                .uri("/api/candidates/100/average")
+                .errorMessage("Le candidat [100] n'a pas été trouvé")
                 .build();
 
         //when
