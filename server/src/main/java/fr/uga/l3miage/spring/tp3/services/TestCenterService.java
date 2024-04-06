@@ -14,8 +14,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TestCenterService {
-    private CandidateComponent candidateComponent;
-    private TestCenterComponent testCenterComponent;
+    private final CandidateComponent candidateComponent;
+    private final TestCenterComponent testCenterComponent;
 
     public boolean addStudentColletionInTestCenter(Long idTestCenter, List<Long> listIds) {
         List<CandidateEntity> candidateEntityList = candidateComponent.getCandidatsByIds(listIds);
