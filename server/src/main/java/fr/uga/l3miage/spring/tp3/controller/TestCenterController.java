@@ -13,8 +13,8 @@ public class TestCenterController implements TestCenterEndpoints {
     private final TestCenterService testCenterService;
 
     @Override
-    public boolean addStudentColletionInTestCenter(Long id, List<Long> ids) {
-        return testCenterService.addListOfStudentToTestCenter(id, ids);
+    public boolean addStudentColletionInTestCenter(Long testCenterId, List<Long> studentCollectionIds) {
+        return testCenterService.addStudentColletionInTestCenter(testCenterId, studentCollectionIds);
     }
 
 

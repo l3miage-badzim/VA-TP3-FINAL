@@ -19,7 +19,7 @@ public class TestCenterComponent {
         return testCenterRepository.findById(id).orElseThrow(() -> new TestCenterNotFoundException("testCenter non trouvé", id));
     }
 
-    public boolean addListOfStudentsToTestCenter(TestCenterEntity testCenterEntity, List<CandidateEntity> listStudents) throws TestCenterNotFoundException{
+    public boolean addStudentColletionInTestCenter(TestCenterEntity testCenterEntity, List<CandidateEntity> listStudents) throws TestCenterNotFoundException{
         Set<CandidateEntity> candidateEntities = testCenterEntity.getCandidateEntities();
         boolean result = candidateEntities.addAll(listStudents);
         testCenterEntity.setCandidateEntities(candidateEntities);
