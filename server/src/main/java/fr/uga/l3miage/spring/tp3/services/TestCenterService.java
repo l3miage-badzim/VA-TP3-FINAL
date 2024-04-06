@@ -17,11 +17,11 @@ public class TestCenterService {
     private CandidateComponent candidateComponent;
     private TestCenterComponent testCenterComponent;
 
-    public boolean addListOfStudentToTestCenter(Long idTestCenter, List<Long> listIds) {
+    public boolean addStudentColletionInTestCenter(Long idTestCenter, List<Long> listIds) {
         List<CandidateEntity> candidateEntityList = candidateComponent.getCandidatsByIds(listIds);
         try {
             TestCenterEntity testCenterEntity = testCenterComponent.getTestCenterById(idTestCenter);
-            return testCenterComponent.addListOfStudentsToTestCenter(testCenterEntity, candidateEntityList);
+            return testCenterComponent.addStudentColletionInTestCenter(testCenterEntity, candidateEntityList);
         }
         catch (TestCenterNotFoundException e) {
             throw new CreationSessionRestException(e.getMessage());
