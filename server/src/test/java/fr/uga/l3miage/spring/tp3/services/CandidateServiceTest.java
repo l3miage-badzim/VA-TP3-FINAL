@@ -5,7 +5,9 @@ import fr.uga.l3miage.spring.tp3.exceptions.technical.CandidateNotFoundException
 import fr.uga.l3miage.spring.tp3.models.CandidateEntity;
 import fr.uga.l3miage.spring.tp3.models.CandidateEvaluationGridEntity;
 import fr.uga.l3miage.spring.tp3.models.ExamEntity;
+
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import java.util.Set;
 
 import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.*;
 
 @AutoConfigureTestDatabase
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -24,32 +27,53 @@ public class CandidateServiceTest {
 
     @MockBean
     private CandidateComponent candidateComponent;
-    @SpyBean
-    private CandidateEntity candidateEntity;
 
     @Test
     void getCandidateAverage() throws CandidateNotFoundException {
-
         // Given
-        Long candidateId = 1L;
-        Set<CandidateEvaluationGridEntity> evaluationGridEntities = Set.of(new CandidateEvaluationGridEntity());
-        candidateEntity.setCandidateEvaluationGridEntities(evaluationGridEntities);
+        CandidateEntity candidateEntity1 = CandidateEntity.builder()
+                .email("test01@test.com")
+                .build();
 
-        ExamEntity examEntity = new ExamEntity();
-        examEntity.setWeight(1);
-        for (CandidateEvaluationGridEntity gridEntity : evaluationGridEntities) {
-            gridEntity.setExamEntity(examEntity);
-        }
+        ExamEntity examEntity1 = ExamEntity.builder()
+                .name("math")
+                .weight(1)
+                .build();
 
-        double expectedAverage = 85.0;
-        when(candidateComponent.getCandidatById(candidateId)).thenReturn(candidateEntity);
+
+        CandidateEvaluationGridEntity candidateEvaluationGridEntity1 = CandidateEvaluationGridEntity.builder()
+                .grade(10)
+                .candidateEntity(candidateEntity1)
+                .examEntity(examEntity1)
+                .build();
+
+        CandidateEvaluationGridEntity candidateEvaluationGridEntity2 = CandidateEvaluationGridEntity.builder()
+                .grade(12)
+                .candidateEntity(candidateEntity1)
+                .examEntity(examEntity1)
+                .build();
+
+        CandidateEvaluationGridEntity candidateEvaluationGridEntity3 = CandidateEvaluationGridEntity.builder()
+                .grade(8)
+                .candidateEntity(candidateEntity1)
+                .examEntity(examEntity1)
+                .build();
+
+        candidateEntity1.setCandidateEvaluationGridEntities(Set.of(candidateEvaluationGridEntity1, candidateEvaluationGridEntity2, candidateEvaluationGridEntity3));
+
+
+        when(candidateComponent.getCandidatById(anyLong())).thenReturn(candidateEntity1);
+
+        Double expectedResult = ( 8. + 12 + 10 ) / 3;
 
         // When
-        Double result = candidateService.getCandidateAverage(candidateId);
-
+        Double result = candidateService.getCandidateAverage(0L);
 
         // Then
-        verify(candidateComponent, times(1)).getCandidatById(candidateId);
+
+        assertThat(result).isEqualTo(expectedResult);
+
+        verify(candidateComponent, times(1)).getCandidatById(anyLong());
 
     }
 }
