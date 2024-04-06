@@ -90,26 +90,6 @@ public class CandidateRepositoryTest {
         CandidateEvaluationGridEntity candidateEvaluationGridEntity1 = CandidateEvaluationGridEntity
                 .builder()
                 .grade(3)
-<<<<<<< HEAD
-                .build();
-
-
-        CandidateEntity candidateEntity = CandidateEntity
-                .builder()
-                .firstname("firstname")
-                .candidateEvaluationGridEntities(Set.of(candidateEvaluationGridEntity))
-                .build();
-
-        CandidateEntity candidateEntity1 = CandidateEntity
-                .builder()
-                .firstname("firstname")
-                .candidateEvaluationGridEntities(Set.of(candidateEvaluationGridEntity1))
-                .build();
-
-        
-        candidateEvaluationGridRepository.save(candidateEvaluationGridEntity);
-        candidateEvaluationGridRepository.save(candidateEvaluationGridEntity1);
-=======
                 .candidateEntity(candidateEntity1)
                 .build();
 
@@ -125,10 +105,6 @@ public class CandidateRepositoryTest {
         //then
         assertThat(candidateEntitiesResponses).hasSize(1);
         assertThat(candidateEntitiesResponses.stream().findFirst().get().getFirstname()).isEqualTo("firstname1");
->>>>>>> 955326d (test 2)
-
-        candidateRepository.save(candidateEntity);
-        candidateRepository.save(candidateEntity1);        
     }
     @Test
     void testRequestFindAllByHasExtraTimeFalseAndBirthDateBefore(){
