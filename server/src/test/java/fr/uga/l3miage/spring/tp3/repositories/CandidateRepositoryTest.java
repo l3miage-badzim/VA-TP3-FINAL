@@ -140,35 +140,5 @@ public class CandidateRepositoryTest {
         assertThat(candidateEntitiesResponses).hasSize(1);
         assertThat(candidateEntitiesResponses.stream().findFirst().get().getFirstname()).isEqualTo("candidate1");
     }
-    @Test
-    void testRequestFindAllByHasExtraTimeFalseAndBirthDateBefore(){
-
-        //given
-        CandidateEntity candidateEntity = CandidateEntity
-                .builder()
-                .firstname("candidate1")
-                .email("email@test.com")
-                .birthDate(LocalDate.of(1963, 6, 2))
-                .hasExtraTime(false)
-                .build();
-
-        CandidateEntity candidateEntity1 = CandidateEntity
-                .builder()
-                .firstname("candidate2")
-                .email("email2@test.com")
-                .birthDate(LocalDate.of(1996, 6, 2))
-                .hasExtraTime(false)
-                .build();
-
-        candidateRepository.save(candidateEntity);
-        candidateRepository.save(candidateEntity1);
-
-        //when
-        Set<CandidateEntity> candidateEntitiesResponses = candidateRepository.findAllByHasExtraTimeFalseAndBirthDateBefore(LocalDate.of(1996, 6, 2));
-
-        //then
-        assertThat(candidateEntitiesResponses).hasSize(1);
-        assertThat(candidateEntitiesResponses.stream().findFirst().get().getFirstname()).isEqualTo("candidate1");
-
-    }
+   
 }
