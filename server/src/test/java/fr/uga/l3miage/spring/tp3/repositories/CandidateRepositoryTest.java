@@ -70,8 +70,6 @@ public class CandidateRepositoryTest {
     }
     @Test
     void testRequestFindAllByCandidateEvaluationGridEntitiesGradeLessThan(){
-
-        //given
         CandidateEntity candidateEntity = CandidateEntity
                 .builder()
                 .firstname("firstname")
@@ -109,6 +107,7 @@ public class CandidateRepositoryTest {
         assertThat(candidateEntitiesResponses).hasSize(1);
         assertThat(candidateEntitiesResponses.stream().findFirst().get().getFirstname()).isEqualTo("firstname1");
 
+
     }
     @Test
     void testRequestFindAllByHasExtraTimeFalseAndBirthDateBefore(){
@@ -139,6 +138,5 @@ public class CandidateRepositoryTest {
         //then
         assertThat(candidateEntitiesResponses).hasSize(1);
         assertThat(candidateEntitiesResponses.stream().findFirst().get().getFirstname()).isEqualTo("candidate1");
-
     }
 }
