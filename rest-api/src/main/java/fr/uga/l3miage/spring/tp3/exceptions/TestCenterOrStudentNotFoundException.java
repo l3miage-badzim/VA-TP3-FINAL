@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class TestCenterOrCandidatInListNotFoundResponse {
+public class TestCenterOrStudentNotFoundException {
     private String uri;
     private String errorMessage;
     private Long candidateId;
