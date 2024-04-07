@@ -2,16 +2,15 @@ package fr.uga.l3miage.spring.tp3.controllers;
 
 import fr.uga.l3miage.spring.tp3.components.ExamComponent;
 import fr.uga.l3miage.spring.tp3.components.SessionComponent;
-import fr.uga.l3miage.spring.tp3.controller.SessionController;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.ExamNotFoundException;
 import fr.uga.l3miage.spring.tp3.models.EcosSessionEntity;
 import fr.uga.l3miage.spring.tp3.repositories.EcosSessionRepository;
 import fr.uga.l3miage.spring.tp3.request.SessionCreationRequest;
 import fr.uga.l3miage.spring.tp3.request.SessionProgrammationCreationRequest;
 import fr.uga.l3miage.spring.tp3.request.SessionProgrammationStepCreationRequest;
+import fr.uga.l3miage.spring.tp3.responses.CandidateEvaluationGridResponse;
 import fr.uga.l3miage.spring.tp3.responses.SessionResponse;
 
-import fr.uga.l3miage.spring.tp3.responses.enums.SessionStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +19,16 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.*;
 
 @AutoConfigureTestDatabase
 @AutoConfigureWebTestClient
@@ -93,8 +92,26 @@ public class SessionControllerTest {
     }
 
 
+    @Test
+    void changeStatus_Success() {
+        // Given
+        final HttpHeaders headers = new HttpHeaders();
 
+        // When
+        final Map<String, Object> urlParams = new HashMap<>();
+        urlParams.put("idSession", 1L);
+        ResponseEntity<List<CandidateEvaluationGridResponse>> response = testRestTemplate.exchange(
+                "/api/session/changeStatus/{idSession}",
+                HttpMethod.PUT,
+                new HttpEntity<>(null, headers),
+                new ParameterizedTypeReference<List<CandidateEvaluationGridResponse>>() {}, // Spécifier explicitement le type
+                urlParams
+        );
 
+        // Then
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        // Add more assertions based on the expected behavior
+    }
 
 
 }
