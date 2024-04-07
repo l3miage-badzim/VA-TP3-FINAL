@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class ChangeSessionStatusErrorResponse {
+public class SessionConflitErrorResponse {
     @Schema(description = "lien d'appel de l'api", example = "api/drone/")
     private final String uri;
     @Schema(description = "message d'erreur", example = "Le status n'a pas été changé")
