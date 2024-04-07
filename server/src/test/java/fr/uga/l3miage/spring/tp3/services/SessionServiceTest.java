@@ -2,14 +2,21 @@ package fr.uga.l3miage.spring.tp3.services;
 
 import fr.uga.l3miage.spring.tp3.components.ExamComponent;
 import fr.uga.l3miage.spring.tp3.components.SessionComponent;
+import fr.uga.l3miage.spring.tp3.enums.SessionStatus;
+import fr.uga.l3miage.spring.tp3.exceptions.rest.ChangingStatusRestException;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.ExamNotFoundException;
+import fr.uga.l3miage.spring.tp3.exceptions.technical.SessionConflitException;
+import fr.uga.l3miage.spring.tp3.exceptions.technical.SessionNotFoundException;
+import fr.uga.l3miage.spring.tp3.mappers.CandidateEvaluationGridMapper;
 import fr.uga.l3miage.spring.tp3.mappers.SessionMapper;
+import fr.uga.l3miage.spring.tp3.models.CandidateEvaluationGridEntity;
 import fr.uga.l3miage.spring.tp3.models.EcosSessionEntity;
 import fr.uga.l3miage.spring.tp3.models.EcosSessionProgrammationEntity;
 import fr.uga.l3miage.spring.tp3.models.EcosSessionProgrammationStepEntity;
 import fr.uga.l3miage.spring.tp3.request.SessionCreationRequest;
 import fr.uga.l3miage.spring.tp3.request.SessionProgrammationCreationRequest;
 import fr.uga.l3miage.spring.tp3.request.SessionProgrammationStepCreationRequest;
+import fr.uga.l3miage.spring.tp3.responses.CandidateEvaluationGridResponse;
 import fr.uga.l3miage.spring.tp3.responses.SessionResponse;
 
 import org.junit.jupiter.api.Test;
@@ -20,9 +27,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -41,6 +50,9 @@ public class SessionServiceTest {
 
     @MockBean
     private SessionComponent sessionComponent;
+    @MockBean
+    private CandidateEvaluationGridMapper candidateEvaluationGridMapper;
+
 
     @Test
     void testCreateSession() throws ExamNotFoundException {
@@ -101,6 +113,63 @@ public class SessionServiceTest {
 
 
 
+    }
+
+
+    @Test
+    void testChangeStatusSessionNotFound() throws SessionConflitException, SessionNotFoundException {
+        // Given
+        EcosSessionEntity ecosSessionEntity = EcosSessionEntity.builder()
+                .name("EcosSessionTest01")
+                .status(SessionStatus.EVAL_STARTED)
+                .examEntities(Set.of())
+                .build();
+        when(sessionComponent.changeStatus(ecosSessionEntity.getId())).thenThrow(new SessionNotFoundException("Session not found"));
+
+        // When, Then
+        assertThrows(ChangingStatusRestException.class, () -> sessionService.changeStatus(ecosSessionEntity.getId()));
+        verify(sessionComponent, times(1)).changeStatus(ecosSessionEntity.getId());
+    }
+
+    @Test
+    void testChangeStatusConflict() throws SessionConflitException, SessionNotFoundException {
+        // Given
+        EcosSessionEntity ecosSessionEntity = EcosSessionEntity.builder()
+                .name("EcosSessionTest01")
+                .status(SessionStatus.CREATED)
+                .examEntities(Set.of())
+                .build();
+        when(sessionComponent.changeStatus(ecosSessionEntity.getId())).thenThrow(new SessionConflitException("Session conflict"));
+
+        // When, Then
+        assertThrows(ChangingStatusRestException.class, () -> sessionService.changeStatus(ecosSessionEntity.getId()));
+        verify(sessionComponent, times(1)).changeStatus(ecosSessionEntity.getId());
+    }
+
+    @Test
+    void testChangeStatusSuccess() throws SessionConflitException, SessionNotFoundException {
+        // Given
+        EcosSessionEntity ecosSessionEntity = EcosSessionEntity.builder()
+                .name("EcosSessionTest01")
+                .status(SessionStatus.EVAL_STARTED)
+                .examEntities(Set.of())
+                .build();
+
+        CandidateEvaluationGridEntity evaluationGridEntity = new CandidateEvaluationGridEntity();
+        List<CandidateEvaluationGridEntity> evaluationGrids = List.of(evaluationGridEntity);
+        when(sessionComponent.changeStatus(ecosSessionEntity.getId())).thenReturn(evaluationGrids);
+        CandidateEvaluationGridResponse expectedResponse = new CandidateEvaluationGridResponse();
+        when(candidateEvaluationGridMapper.toResponse(evaluationGridEntity)).thenReturn(expectedResponse);
+
+        // When
+        List<CandidateEvaluationGridResponse> response = sessionService.changeStatus(ecosSessionEntity.getId());
+
+        // Then
+        assertNotNull(response);
+        assertEquals(1, response.size());
+        assertSame(expectedResponse, response.get(0));
+        verify(sessionComponent, times(1)).changeStatus(ecosSessionEntity.getId());
+        verify(candidateEvaluationGridMapper, times(1)).toResponse(evaluationGridEntity);
     }
 
 }

@@ -3,7 +3,7 @@ package fr.uga.l3miage.spring.tp3.services;
 import fr.uga.l3miage.spring.tp3.components.ExamComponent;
 import fr.uga.l3miage.spring.tp3.components.SessionComponent;
 import fr.uga.l3miage.spring.tp3.enums.SessionStatus;
-import fr.uga.l3miage.spring.tp3.exceptions.rest.ChangingStatusRestException;
+import fr.uga.l3miage.spring.tp3.exceptions.rest.SessionConflitRestException;
 import fr.uga.l3miage.spring.tp3.exceptions.rest.CreationSessionRestException;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.ExamNotFoundException;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.SessionConflitException;
@@ -60,11 +60,14 @@ public class SessionService {
             List<CandidateEvaluationGridEntity> evaluationGrids = sessionComponent.changeStatus(idSession);
             List<CandidateEvaluationGridResponse> result = new ArrayList<>();
             for (CandidateEvaluationGridEntity grid : evaluationGrids) {
-                result.add(candidateEvaluationGridMapper.toResponse(grid));
+                CandidateEvaluationGridResponse test = candidateEvaluationGridMapper.toResponse(grid);
+                result.add(test);
             }
             return result;
-        } catch (SessionNotFoundException | SessionConflitException e) {
-            throw new ChangingStatusRestException(e.getMessage());
+        } catch (SessionNotFoundException  e) {
+            throw new SessionConflitRestException(e.getMessage(), null);
+        } catch (SessionConflitException e) {
+            throw new SessionConflitRestException(e.getMessage(), e.getActualStatus());
         }
     }
 }

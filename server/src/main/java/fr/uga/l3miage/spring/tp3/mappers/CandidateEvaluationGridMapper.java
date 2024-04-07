@@ -10,8 +10,10 @@ public interface CandidateEvaluationGridMapper {
 
 
 
-    CandidateEvaluationGridResponse toResponse(CandidateEvaluationGridEntity entity);
+        @Mapping(source = "candidateEntity", target = "candidateEntity")
+        @Mapping(source = "examinerEntity", target = "examinerEntity")
+        @Mapping(source = "examEntity", target = "examEntity")// Ignore ce champ
+        CandidateEvaluationGridResponse toResponse(CandidateEvaluationGridEntity entity);
+    }
 
-    // Vous pouvez ajouter des méthodes supplémentaires ici pour mapper dans l'autre sens si nécessaire
-    // ou pour gérer des cas de mapping plus complexes.
-}
+
