@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.attribute.standard.Media;
 import java.util.List;
 
 @Tag(name="Gestion testCenter", description = "Tous les endpoints de gestion d'un testCenter")
@@ -24,5 +23,5 @@ public interface TestCenterEndpoints {
     @ApiResponse(responseCode = "400" ,description = "Le testCenter n'as pas pu être modifié", content = @Content(schema = @Schema(implementation = String.class),mediaType = MediaType.APPLICATION_JSON_VALUE))
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PatchMapping("/{idTestCenter}/add")
-    boolean addStudentColletionInTestCenter(@PathVariable(name = "idTestCenter")Long idTestCenter, @RequestParam List<Long> listIdStudents);
+    boolean addStudentColletionToTestCenter(@PathVariable(name = "idTestCenter")Long idTestCenter, @RequestParam List<Long> listIdStudents);
 }

@@ -30,8 +30,21 @@ public class CandidateComponent {
        return candidateRepository.findById(id).orElseThrow(()-> new CandidateNotFoundException(String.format("Le candidat [%s] n'a pas été trouvé",id),id));
     }
 
-    public List<CandidateEntity> getCandidatsByIds(List<Long> listIds) {
-        return candidateRepository.findAllById(listIds);
-    }
+    public List<CandidateEntity> getCandidatsByIds(List<Long> listIds) throws CandidateNotFoundException {
+        List<CandidateEntity> foundCandidates = candidateRepository.findAllById(listIds);
+
+        Set<Long> foundIds = foundCandidates.stream()
+                .map(CandidateEntity::getId)
+                .collect(Collectors.toSet());
+
+        listIds.removeAll(foundIds);
+
+        if (!listIds.isEmpty()) {
+            // on affiche le premier id non trouvé
+            Long missingId = listIds.iterator().next();
+            throw new CandidateNotFoundException("Le candidat avec l'ID " + missingId + " existe pas", missingId);
+        }
+        return foundCandidates;
+      }
 
 }
