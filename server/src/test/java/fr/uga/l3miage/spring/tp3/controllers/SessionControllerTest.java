@@ -3,7 +3,7 @@ package fr.uga.l3miage.spring.tp3.controllers;
 import fr.uga.l3miage.spring.tp3.components.ExamComponent;
 import fr.uga.l3miage.spring.tp3.components.SessionComponent;
 import fr.uga.l3miage.spring.tp3.exceptions.CandidatNotFoundResponse;
-import fr.uga.l3miage.spring.tp3.exceptions.ChangeSessionStatusErrorResponse;
+import fr.uga.l3miage.spring.tp3.exceptions.SessionConflitErrorResponse;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.ExamNotFoundException;
 import fr.uga.l3miage.spring.tp3.models.EcosSessionEntity;
 import fr.uga.l3miage.spring.tp3.repositories.EcosSessionRepository;
@@ -126,14 +126,14 @@ public class SessionControllerTest {
         final Map<String, Object> urlParams = new HashMap<>();
         urlParams.put("idSession", 1L);
 
-        ChangeSessionStatusErrorResponse changeSessionStatusErrorResponse = ChangeSessionStatusErrorResponse
+        SessionConflitErrorResponse changeSessionStatusErrorResponse = SessionConflitErrorResponse
                 .builder()
                 .uri("/api/sessions/100")
                 .errorMessage("État précedent bizarre")
                 .actualStatus(SessionStatus.EVAL_ENDED)
                 .build();
 
-        ResponseEntity<ChangeSessionStatusErrorResponse> response = testRestTemplate.exchange("/api/sessions/100", HttpMethod.POST, new HttpEntity<>(null, headers), ChangeSessionStatusErrorResponse.class, urlParams);
+        ResponseEntity<SessionConflitErrorResponse> response = testRestTemplate.exchange("/api/sessions/100", HttpMethod.POST, new HttpEntity<>(null, headers), SessionConflitErrorResponse.class, urlParams);
 
         AssertionsForClassTypes.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         AssertionsForClassTypes.assertThat(response.getBody()).usingRecursiveComparison()

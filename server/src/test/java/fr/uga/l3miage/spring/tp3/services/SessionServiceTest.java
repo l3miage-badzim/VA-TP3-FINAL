@@ -3,7 +3,7 @@ package fr.uga.l3miage.spring.tp3.services;
 import fr.uga.l3miage.spring.tp3.components.ExamComponent;
 import fr.uga.l3miage.spring.tp3.components.SessionComponent;
 import fr.uga.l3miage.spring.tp3.enums.SessionStatus;
-import fr.uga.l3miage.spring.tp3.exceptions.rest.ChangingStatusRestException;
+import fr.uga.l3miage.spring.tp3.exceptions.rest.SessionConflitRestException;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.ExamNotFoundException;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.SessionConflitException;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.SessionNotFoundException;
@@ -127,7 +127,7 @@ public class SessionServiceTest {
         when(sessionComponent.changeStatus(ecosSessionEntity.getId())).thenThrow(new SessionNotFoundException("Session not found"));
 
         // When, Then
-        assertThrows(ChangingStatusRestException.class, () -> sessionService.changeStatus(ecosSessionEntity.getId()));
+        assertThrows(SessionConflitRestException.class, () -> sessionService.changeStatus(ecosSessionEntity.getId()));
         verify(sessionComponent, times(1)).changeStatus(ecosSessionEntity.getId());
     }
 
@@ -139,10 +139,10 @@ public class SessionServiceTest {
                 .status(SessionStatus.CREATED)
                 .examEntities(Set.of())
                 .build();
-        when(sessionComponent.changeStatus(ecosSessionEntity.getId())).thenThrow(new SessionConflitException("Session conflict"));
+        when(sessionComponent.changeStatus(ecosSessionEntity.getId())).thenThrow(new SessionConflitException("Session conflict", SessionStatus.CREATED));
 
         // When, Then
-        assertThrows(ChangingStatusRestException.class, () -> sessionService.changeStatus(ecosSessionEntity.getId()));
+        assertThrows(SessionConflitRestException.class, () -> sessionService.changeStatus(ecosSessionEntity.getId()));
         verify(sessionComponent, times(1)).changeStatus(ecosSessionEntity.getId());
     }
 
@@ -158,7 +158,7 @@ public class SessionServiceTest {
         CandidateEvaluationGridEntity evaluationGridEntity = new CandidateEvaluationGridEntity();
         List<CandidateEvaluationGridEntity> evaluationGrids = List.of(evaluationGridEntity);
         when(sessionComponent.changeStatus(ecosSessionEntity.getId())).thenReturn(evaluationGrids);
-        CandidateEvaluationGridResponse expectedResponse = new CandidateEvaluationGridResponse();
+        CandidateEvaluationGridResponse expectedResponse =  CandidateEvaluationGridResponse.builder().build();
         when(candidateEvaluationGridMapper.toResponse(evaluationGridEntity)).thenReturn(expectedResponse);
 
         // When
