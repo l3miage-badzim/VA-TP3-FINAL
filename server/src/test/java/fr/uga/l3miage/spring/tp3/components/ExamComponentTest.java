@@ -3,6 +3,7 @@ package fr.uga.l3miage.spring.tp3.components;
 
 import fr.uga.l3miage.spring.tp3.exceptions.technical.ExamNotFoundException;
 import fr.uga.l3miage.spring.tp3.models.ExamEntity;
+
 import fr.uga.l3miage.spring.tp3.models.SkillEntity;
 import fr.uga.l3miage.spring.tp3.repositories.ExamRepository;
 import fr.uga.l3miage.spring.tp3.repositories.SkillRepository;
@@ -21,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.ArgumentMatchers.any;
+
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.when;
 
 @AutoConfigureTestDatabase
@@ -31,6 +34,7 @@ public class ExamComponentTest {
     private ExamComponent examComponent;
     @MockBean
     private ExamRepository examRepository;
+
     @MockBean
     private SkillRepository skillRepository;
 
@@ -74,5 +78,5 @@ public class ExamComponentTest {
         // When - then
         assertDoesNotThrow(() -> examComponent.getAllCardioExam());
     }
-
+    
 }
