@@ -6,5 +6,7 @@ import org.mapstruct.Mapper;
 
 @Mapper
 public interface EcosSessionMapper {
-    static EcosSessionResponse toResponse(EcosSessionEntity ecosSessionEntity);
+    static EcosSessionResponse toResponse(EcosSessionEntity ecosSessionEntity) {
+        return null;
+    }
 }
