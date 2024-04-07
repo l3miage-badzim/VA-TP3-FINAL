@@ -1,7 +1,10 @@
 package fr.uga.l3miage.spring.tp3.endpoints;
 
+import fr.uga.l3miage.spring.tp3.exceptions.ChangeSessionStatusErrorResponse;
 import fr.uga.l3miage.spring.tp3.request.SessionCreationRequest;
+import fr.uga.l3miage.spring.tp3.responses.CandidateEvaluationGridResponse;
 import fr.uga.l3miage.spring.tp3.responses.SessionResponse;
+import fr.uga.l3miage.spring.tp3.responses.enums.SessionStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,6 +13,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Gestion des session")
 @RestController
@@ -22,5 +27,13 @@ public interface SessionEndpoints {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
     SessionResponse createSession(@RequestBody SessionCreationRequest request);
+
+
+    @Operation(description = "Changer le status d'une session")
+    @ApiResponse(responseCode = "200", description = "OK")
+    @ApiResponse(responseCode = "409", description = "CONFLIT",content = @Content(schema = @Schema(implementation = ChangeSessionStatusErrorResponse.class),mediaType = MediaType.APPLICATION_JSON_VALUE))
+    @ResponseStatus(HttpStatus.OK)
+    @PatchMapping("/{idSession}")
+    List<CandidateEvaluationGridResponse> changeStatus(@PathVariable(name = "idSession") Long idSession);
 
 }
