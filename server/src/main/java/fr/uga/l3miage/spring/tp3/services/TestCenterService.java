@@ -3,6 +3,7 @@ package fr.uga.l3miage.spring.tp3.services;
 import fr.uga.l3miage.spring.tp3.components.CandidateComponent;
 import fr.uga.l3miage.spring.tp3.components.TestCenterComponent;
 import fr.uga.l3miage.spring.tp3.exceptions.rest.CreationSessionRestException;
+import fr.uga.l3miage.spring.tp3.exceptions.rest.UpdateTestSessionRestException;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.CandidateNotFoundException;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.TestCenterNotFoundException;
 import fr.uga.l3miage.spring.tp3.models.CandidateEntity;
@@ -27,7 +28,7 @@ public class TestCenterService {
             return testCenterComponent.addStudentColletionToTestCenter(testCenterEntity, candidateEntityList);
         }
         catch (TestCenterNotFoundException | CandidateNotFoundException e) {
-            throw new CreationSessionRestException(e.getMessage());
+            throw new UpdateTestSessionRestException(e.getMessage());
         }
 
     }
