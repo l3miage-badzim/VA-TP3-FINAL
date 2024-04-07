@@ -8,6 +8,7 @@ import fr.uga.l3miage.spring.tp3.repositories.CandidateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,5 +29,22 @@ public class CandidateComponent {
     public CandidateEntity getCandidatById(Long id) throws CandidateNotFoundException {
        return candidateRepository.findById(id).orElseThrow(()-> new CandidateNotFoundException(String.format("Le candidat [%s] n'a pas été trouvé",id),id));
     }
+
+    public List<CandidateEntity> getCandidatsByIds(List<Long> listIds) throws CandidateNotFoundException {
+        List<CandidateEntity> foundCandidates = candidateRepository.findAllById(listIds);
+
+        Set<Long> foundIds = foundCandidates.stream()
+                .map(CandidateEntity::getId)
+                .collect(Collectors.toSet());
+
+        listIds.removeAll(foundIds);
+
+        if (!listIds.isEmpty()) {
+            // on affiche le premier id non trouvé
+            Long missingId = listIds.iterator().next();
+            throw new CandidateNotFoundException("Le candidat avec l'ID " + missingId + " existe pas", missingId);
+        }
+        return foundCandidates;
+      }
 
 }

@@ -4,7 +4,6 @@ import fr.uga.l3miage.spring.tp3.exceptions.ChangeSessionStatusErrorResponse;
 import fr.uga.l3miage.spring.tp3.request.SessionCreationRequest;
 import fr.uga.l3miage.spring.tp3.responses.CandidateEvaluationGridResponse;
 import fr.uga.l3miage.spring.tp3.responses.SessionResponse;
-import fr.uga.l3miage.spring.tp3.responses.enums.SessionStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,5 +34,4 @@ public interface SessionEndpoints {
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{idSession}")
     List<CandidateEvaluationGridResponse> changeStatus(@PathVariable(name = "idSession") Long idSession);
-
 }

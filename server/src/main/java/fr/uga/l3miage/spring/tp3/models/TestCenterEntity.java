@@ -22,7 +22,7 @@ public class TestCenterEntity {
     private  String university;
     private String city ;
 
-    @OneToMany(mappedBy = "testCenterEntity")
+    @OneToMany(mappedBy = "testCenterEntity",  cascade = CascadeType.ALL)
     private Set<CandidateEntity> candidateEntities;
 
     @OneToMany(mappedBy = "testCenterEntity")
