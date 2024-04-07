@@ -35,7 +35,7 @@ public class SessionComponent {
     public List<CandidateEvaluationGridEntity> changeStatus(Long sessionId) throws SessionNotFoundException, SessionConflitException {
         EcosSessionEntity session = ecosSessionRepository.findById(sessionId).orElseThrow(() -> new SessionNotFoundException("session not found"));
         if (session.getStatus() != SessionStatus.EVAL_STARTED) {
-            throw new SessionConflitException("État précédant bizarre");
+            throw new SessionConflitException("État précédant bizarre", session.getStatus());
         }
 
         Set<ExamEntity> exams = session.getExamEntities();

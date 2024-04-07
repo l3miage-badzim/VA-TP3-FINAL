@@ -1,6 +1,6 @@
 package fr.uga.l3miage.spring.tp3.endpoints;
 
-import fr.uga.l3miage.spring.tp3.exceptions.ChangeSessionStatusErrorResponse;
+import fr.uga.l3miage.spring.tp3.exceptions.SessionConflitErrorResponse;
 import fr.uga.l3miage.spring.tp3.request.SessionCreationRequest;
 import fr.uga.l3miage.spring.tp3.responses.CandidateEvaluationGridResponse;
 import fr.uga.l3miage.spring.tp3.responses.SessionResponse;
@@ -30,7 +30,7 @@ public interface SessionEndpoints {
 
     @Operation(description = "Changer le status d'une session")
     @ApiResponse(responseCode = "200", description = "OK")
-    @ApiResponse(responseCode = "409", description = "CONFLIT",content = @Content(schema = @Schema(implementation = ChangeSessionStatusErrorResponse.class),mediaType = MediaType.APPLICATION_JSON_VALUE))
+    @ApiResponse(responseCode = "409", description = "CONFLIT",content = @Content(schema = @Schema(implementation = SessionConflitErrorResponse.class),mediaType = MediaType.APPLICATION_JSON_VALUE))
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{idSession}")
     List<CandidateEvaluationGridResponse> changeStatus(@PathVariable(name = "idSession") Long idSession);

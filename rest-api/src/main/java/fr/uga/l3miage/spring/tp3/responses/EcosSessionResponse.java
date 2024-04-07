@@ -2,12 +2,14 @@ package fr.uga.l3miage.spring.tp3.responses;
 
 import fr.uga.l3miage.spring.tp3.responses.enums.SessionStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
+@Builder
 public class EcosSessionResponse {
     @Schema(description = "id du session")
     private Long id;
