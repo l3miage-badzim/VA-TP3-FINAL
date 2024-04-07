@@ -9,7 +9,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class TestCenterController implements TestCenterEndpoints {
+public class    TestCenterController implements TestCenterEndpoints {
     private final TestCenterService testCenterService;
 
     @Override
