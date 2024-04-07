@@ -2,7 +2,6 @@ package fr.uga.l3miage.spring.tp3.controllers;
 
 import fr.uga.l3miage.spring.tp3.components.CandidateComponent;
 import fr.uga.l3miage.spring.tp3.components.TestCenterComponent;
-import fr.uga.l3miage.spring.tp3.components.TestCenterComponentTest;
 import fr.uga.l3miage.spring.tp3.enums.TestCenterCode;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.CandidateNotFoundException;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.TestCenterNotFoundException;
@@ -10,10 +9,11 @@ import fr.uga.l3miage.spring.tp3.models.CandidateEntity;
 import fr.uga.l3miage.spring.tp3.models.TestCenterEntity;
 import fr.uga.l3miage.spring.tp3.repositories.CandidateRepository;
 import fr.uga.l3miage.spring.tp3.repositories.TestCenterRepository;
-import fr.uga.l3miage.spring.tp3.request.SessionCreationRequest;
-import fr.uga.l3miage.spring.tp3.responses.SessionResponse;
 
+import fr.uga.l3miage.spring.tp3.request.TestCenterAddStudentsRequest;
+import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +23,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
@@ -61,8 +61,12 @@ public class TestCenterControllerTest {
         testCenterRepository.deleteAll();
     }
 
+
+
     @Test
     void testAddStudentColletionToTestCenter() throws TestCenterNotFoundException, CandidateNotFoundException {
+        testRestTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+
         final HttpHeaders headers = new HttpHeaders();
 
         CandidateEntity candidateEntity1 = CandidateEntity.builder()
@@ -94,17 +98,20 @@ public class TestCenterControllerTest {
         candidateRepository.save(candidateEntity1);
         candidateRepository.save(candidateEntity2);
         candidateRepository.save(candidateEntity3);
-
         testCenterRepository.save(testCenterEntity);
 
-        ArgumentCaptor<CandidateEntity> candidateCaptor = ArgumentCaptor.forClass(CandidateEntity.class);
+        TestCenterAddStudentsRequest request = TestCenterAddStudentsRequest.builder()
+                .testCenterId(4L)
+                .studentIds(List.of(1L, 2L, 3L))
+                .build();
+
         //When
-        ResponseEntity<Boolean> response = testRestTemplate.exchange("/api/testCenter/4/add?studentCollectionIds=1&studentCollectionIds=2&studentCollectionIds=3", HttpMethod.POST, new HttpEntity<>(null, headers), Boolean.class);
+        ResponseEntity<Boolean> response = testRestTemplate.exchange("/api/testCenter/students/update", HttpMethod.PATCH, new HttpEntity<TestCenterAddStudentsRequest>(request, headers), Boolean.class);
 
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
         assertTrue(response.getBody());
-        verify(testCenterComponent, times(1)).addStudentColletionToTestCenter(any(TestCenterEntity.class), anySet());
+        verify(testCenterComponent, times(1)).addStudents(any(TestCenterEntity.class), anySet());
         verify(testCenterComponent, times(1)).getTestCenterById(any());
         verify(candidateComponent, times(1)).getCandidatsByIds(any());
 

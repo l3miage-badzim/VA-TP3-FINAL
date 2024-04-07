@@ -22,7 +22,7 @@ public class TestCenterComponent {
         return testCenterRepository.findById(id).orElseThrow(() -> new TestCenterNotFoundException("testCenter avec l'ID " + id +" non trouvé", id));
     }
 
-    public boolean addStudentColletionToTestCenter(TestCenterEntity testCenterEntity, Set<CandidateEntity> listStudents){
+    public boolean addStudents(TestCenterEntity testCenterEntity, Set<CandidateEntity> listStudents){
         for (CandidateEntity student : listStudents) {
             // je dois ajouter la logique pour verifier que seul les étudiants de plus de 18 ans sont ajouté
             if (Period.between(student.getBirthDate(), LocalDate.now()).getYears() >= 18) {

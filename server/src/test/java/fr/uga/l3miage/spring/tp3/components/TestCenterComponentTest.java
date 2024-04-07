@@ -96,7 +96,7 @@ public class TestCenterComponentTest {
         ArgumentCaptor<CandidateEntity> candidateCaptor = ArgumentCaptor.forClass(CandidateEntity.class);
 
         // When
-        boolean result = testCenterComponent.addStudentColletionToTestCenter(testCenterEntity, Set.of(candidateEntity1, candidateEntity2));
+        boolean result = testCenterComponent.addStudents(testCenterEntity, Set.of(candidateEntity1, candidateEntity2));
 
         // Then
 

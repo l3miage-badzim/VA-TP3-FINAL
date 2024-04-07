@@ -2,13 +2,13 @@ package fr.uga.l3miage.spring.tp3.services;
 
 import fr.uga.l3miage.spring.tp3.components.CandidateComponent;
 import fr.uga.l3miage.spring.tp3.components.TestCenterComponent;
-import fr.uga.l3miage.spring.tp3.exceptions.rest.UpdateTestSessionRestException;
+import fr.uga.l3miage.spring.tp3.exceptions.rest.UpdateTestCenterRestException;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.CandidateNotFoundException;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.TestCenterNotFoundException;
 import fr.uga.l3miage.spring.tp3.models.CandidateEntity;
 import fr.uga.l3miage.spring.tp3.models.TestCenterEntity;
 
-import org.hibernate.sql.Update;
+import fr.uga.l3miage.spring.tp3.request.TestCenterAddStudentsRequest;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,18 +74,21 @@ public class TestCenterServiceTest {
 
         when(testCenterComponent.getTestCenterById(100L)).thenReturn(testCenterEntity);
         when(candidateComponent.getCandidatsByIds(List.of(10L, 20L, 30L))).thenReturn(List.of(candidateEntity1, candidateEntity2, candidateEntity3));
-        when(testCenterComponent.addStudentColletionToTestCenter(any(TestCenterEntity.class), anySet())).thenReturn(true);
+        when(testCenterComponent.addStudents(any(TestCenterEntity.class), anySet())).thenReturn(true);
 
         // Utilisation d'ArgumentCaptor
         ArgumentCaptor<TestCenterEntity> testCenterCaptor = ArgumentCaptor.forClass(TestCenterEntity.class);
 
-
+        TestCenterAddStudentsRequest request = TestCenterAddStudentsRequest.builder()
+                .testCenterId(100L)
+                .studentIds(List.of(10L, 20L, 30L))
+                .build();
 
         // Then
-        assertDoesNotThrow(() -> testCenterService.addStudentColletionToTestCenter(100L, List.of(10L, 20L, 30L)));
+        assertDoesNotThrow(() -> testCenterService.addStudents(request));
 
         verify(testCenterComponent, times(1)).getTestCenterById(any());
-        verify(testCenterComponent, times(1)).addStudentColletionToTestCenter(testCenterCaptor.capture(), anySet());
+        verify(testCenterComponent, times(1)).addStudents(testCenterCaptor.capture(), anySet());
         verify(candidateComponent, times(1)).getCandidatsByIds(any());
 
         assertThat(testCenterCaptor.getValue()).isEqualTo(testCenterEntity);
@@ -127,7 +130,13 @@ public class TestCenterServiceTest {
         when(testCenterComponent.getTestCenterById(147L)).thenThrow(new TestCenterNotFoundException("testCenter avec l'ID " + 147L +" non trouvé", 147L));
         when(candidateComponent.getCandidatsByIds(List.of())).thenReturn(List.of());
 
-        assertThrows(UpdateTestSessionRestException.class, () -> testCenterService.addStudentColletionToTestCenter(147L, List.of()));
+        TestCenterAddStudentsRequest request = TestCenterAddStudentsRequest.builder()
+                .testCenterId(147L)
+                .studentIds(List.of())
+                .build();
+
+        //When-Then
+        assertThrows(UpdateTestCenterRestException.class, () -> testCenterService.addStudents(request));
     }
 
     @Test
@@ -162,12 +171,16 @@ public class TestCenterServiceTest {
                 .candidateEntities(Set.of(candidateEntity1, candidateEntity3))
                 .build();
 
-        Long missingId = 404L;
+        Long missingCandidateId = 404L;
+        TestCenterAddStudentsRequest request = TestCenterAddStudentsRequest.builder()
+                .testCenterId(147L)
+                .studentIds(List.of(30L, missingCandidateId))
+                .build();
         when(testCenterComponent.getTestCenterById(100L)).thenReturn(testCenterEntity);
-        when(candidateComponent.getCandidatsByIds(List.of(30L, missingId))).thenThrow(new CandidateNotFoundException("Le candidat avec l'ID " + missingId + " existe pas", missingId));
+        when(candidateComponent.getCandidatsByIds(List.of(30L, missingCandidateId))).thenThrow(new CandidateNotFoundException("Le candidat avec l'ID " + missingCandidateId + " existe pas", missingCandidateId));
 
-        assertThrows(UpdateTestSessionRestException.class, () -> testCenterService.addStudentColletionToTestCenter(147L, List.of(30L, missingId)));
-        // Je peux ajouter la comparaison des messages attendues...
+        assertThrows(UpdateTestCenterRestException.class, () -> testCenterService.addStudents(request));
+        // Je peux ajouter la comparaison des messages d'erreur...
     }
 
 }

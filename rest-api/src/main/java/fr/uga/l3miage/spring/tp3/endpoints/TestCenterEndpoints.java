@@ -1,7 +1,8 @@
 package fr.uga.l3miage.spring.tp3.endpoints;
 
+import fr.uga.l3miage.spring.tp3.exceptions.CandidatNotFoundResponse;
 import fr.uga.l3miage.spring.tp3.exceptions.TestCenterOrStudentNotFoundException;
-import fr.uga.l3miage.spring.tp3.request.TestCenterUpdateRequest;
+import fr.uga.l3miage.spring.tp3.request.TestCenterAddStudentsRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,5 +23,5 @@ public interface TestCenterEndpoints {
     @ApiResponse(responseCode = "400" ,description = "Le testCenter n'as pas pu être modifié", content = @Content(schema = @Schema(implementation = String.class),mediaType = MediaType.APPLICATION_JSON_VALUE))
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PatchMapping("/students/update")
-    boolean addStudentColletionToTestCenter(@RequestBody TestCenterUpdateRequest testCenterUpdateRequest);
+    boolean addStudents(@RequestBody TestCenterAddStudentsRequest testCenterAddStudentsRequest);
 }
