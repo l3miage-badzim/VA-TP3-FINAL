@@ -2,6 +2,8 @@ package fr.uga.l3miage.spring.tp3.controllers;
 
 import fr.uga.l3miage.spring.tp3.components.ExamComponent;
 import fr.uga.l3miage.spring.tp3.components.SessionComponent;
+import fr.uga.l3miage.spring.tp3.exceptions.CandidatNotFoundResponse;
+import fr.uga.l3miage.spring.tp3.exceptions.ChangeSessionStatusErrorResponse;
 import fr.uga.l3miage.spring.tp3.exceptions.technical.ExamNotFoundException;
 import fr.uga.l3miage.spring.tp3.models.EcosSessionEntity;
 import fr.uga.l3miage.spring.tp3.repositories.EcosSessionRepository;
@@ -11,6 +13,8 @@ import fr.uga.l3miage.spring.tp3.request.SessionProgrammationStepCreationRequest
 import fr.uga.l3miage.spring.tp3.responses.CandidateEvaluationGridResponse;
 import fr.uga.l3miage.spring.tp3.responses.SessionResponse;
 
+import fr.uga.l3miage.spring.tp3.responses.enums.SessionStatus;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +115,30 @@ public class SessionControllerTest {
         // Then
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         // Add more assertions based on the expected behavior
+    }
+
+    @Test
+    void changeStatusConflit() {
+        // Given
+        final HttpHeaders headers = new HttpHeaders();
+
+        // When
+        final Map<String, Object> urlParams = new HashMap<>();
+        urlParams.put("idSession", 1L);
+
+        ChangeSessionStatusErrorResponse changeSessionStatusErrorResponse = ChangeSessionStatusErrorResponse
+                .builder()
+                .uri("/api/sessions/100")
+                .errorMessage("État précedent bizarre")
+                .actualStatus(SessionStatus.EVAL_ENDED)
+                .build();
+
+        ResponseEntity<ChangeSessionStatusErrorResponse> response = testRestTemplate.exchange("/api/sessions/100", HttpMethod.POST, new HttpEntity<>(null, headers), ChangeSessionStatusErrorResponse.class, urlParams);
+
+        AssertionsForClassTypes.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        AssertionsForClassTypes.assertThat(response.getBody()).usingRecursiveComparison()
+                .isEqualTo(changeSessionStatusErrorResponse);
+
     }
 
 
